@@ -3,6 +3,7 @@ package com.jebhomenye.domain.common.core;
 import static com.jebhomenye.domain.common.util.DynamicMethodInvoker.invoke;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,20 +11,19 @@ import java.util.List;
 import lombok.SneakyThrows;
 
 import com.jebhomenye.domain.common.event.DomainEvent;
+import com.jebhomenye.domain.common.event.DomainEventPublisher;
 
-public abstract class AggregateRoot<T extends Identity<? extends Serializable>, M extends Momento> 
-		implements ConcurrentModificationSafeEntity<T>, Originator<M> {
+public abstract class AggregateRoot<E, T extends Identity<? extends Serializable>, M extends Momento> 
+		implements ConcurrentModificationSafeEntity<E, T>, Originator<M> {
 	
-	private static final LinkedList<DomainEvent> changes = new LinkedList<>();
+	private transient LinkedList<DomainEvent> changes = new LinkedList<>();
 	
 	public <D extends DomainEvent>void apply(D event){
 		changes.add(event);
 		mutate(event);
-	}
-
-	@Override
-	public void restoreFrom(M momento) {
-		
+		DomainEventPublisher
+		  .instance()
+			.publish(event);
 	}
 
 	@Override

@@ -4,7 +4,9 @@ import org.joda.time.DateTime;
 
 import com.jebhomenye.domain.common.core.ValueObject;
 
-public abstract class DomainEvent implements ValueObject<DomainEvent>{
+public abstract class DomainEvent implements Event, ValueObject<DomainEvent>{
+	
+	private static final long serialVersionUID = 1L;
 	
 	protected final DateTime occuredOn;
 	

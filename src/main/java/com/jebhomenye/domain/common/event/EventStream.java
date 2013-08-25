@@ -1,10 +1,11 @@
 package com.jebhomenye.domain.common.event;
 
-import java.util.LinkedList;
+import java.util.Iterator;
 
-public class EventStream {
+public interface EventStream {
 	
-	public int version;
+	int version();
 	
-	public LinkedList<DomainEvent> events = new LinkedList<>();
+	Iterator<Event> eventIterator();
 }
+ 

@@ -3,6 +3,8 @@ package com.jebhomenye.domain.common.event;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A light weight event publisher that publishes events 
@@ -14,6 +16,7 @@ public class DomainEventPublisher {
 	
 	private static ThreadLocal<DomainEventPublisher> instance = new ThreadLocal<DomainEventPublisher>();
 	private @SuppressWarnings("rawtypes") List subscribers;
+	private ExecutorService executorService = Executors.newCachedThreadPool();
 	
 	private DomainEventPublisher(){
 		ensureSureSubscriberList();
@@ -51,10 +54,22 @@ public class DomainEventPublisher {
 			Class<T> subscribedToEvent = subscriber.subscribedToEventType();
 			
 			if(subscribedToEvent == eventType || subscribedToEvent.isAssignableFrom(eventType)){
-				subscriber.handleEvent(event);
+				handle(event, subscriber);
 			}
 		}
-		
+	}
+	
+	private <T extends DomainEvent>void handle(final T event, final DomainEventSubscriber<T> subscriber){
+		if(subscriber instanceof AsynchronousDomainEventSubscriber){
+			executorService.execute(new Runnable() {
+				@Override
+				public void run() {
+					subscriber.handleEvent(event);
+				}
+			});
+		}else{
+			subscriber.handleEvent(event);
+		}		
 	}
 	
 	public void reset(){
