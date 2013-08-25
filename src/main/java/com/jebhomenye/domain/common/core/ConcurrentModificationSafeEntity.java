@@ -3,11 +3,11 @@ package com.jebhomenye.domain.common.core;
 import java.io.Serializable;
 import java.util.ConcurrentModificationException;
 
-public interface ConcurrentModificationSafeEntity<E, T extends Identity<? extends Serializable>> extends Entity<E, T>{
+public interface ConcurrentModificationSafeEntity<T extends Identity<? extends Serializable>> extends Entity<T>{
 	
-	void setVersion(int version);
+	void version(int version);
 	
-	void version();
+	int version();
 	
 	void failOnConcurrentModification(int aVersion) throws ConcurrentModificationException;
 }

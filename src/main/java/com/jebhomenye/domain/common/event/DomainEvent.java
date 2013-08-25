@@ -8,10 +8,10 @@ public abstract class DomainEvent implements ValueObject<DomainEvent>{
 	
 	protected final DateTime occuredOn;
 	
-	public DomainEvent(){
+	{
 		occuredOn = DateTime.now();
 	}
-	
+
 	public DateTime occuredOn(){
 		return occuredOn;
 	}
