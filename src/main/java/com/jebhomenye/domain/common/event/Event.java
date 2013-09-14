@@ -7,4 +7,6 @@ import org.joda.time.DateTime;
 public interface Event extends Serializable {
 	
 	DateTime occuredOn();
+	
+	int version();
 }

@@ -4,12 +4,14 @@ import static com.jebhomenye.domain.common.util.DynamicMethodInvoker.invoke;
 
 import java.io.Serializable;
 import java.util.ConcurrentModificationException;
+import java.util.LinkedList;
 import java.util.List;
 
 import lombok.SneakyThrows;
 
 import com.jebhomenye.domain.common.event.DomainEvent;
 import com.jebhomenye.domain.common.event.DomainEventPublisher;
+import com.jebhomenye.domain.common.event.Event;
 
 /**
  * A collection of objects that are bound together by a root entity, otherwise known as an aggregate root. 
@@ -23,12 +25,12 @@ import com.jebhomenye.domain.common.event.DomainEventPublisher;
  */
 public abstract class AggregateRoot<E, T extends Identity<? extends Serializable>, M extends Momento> 
 		implements ConcurrentModificationSafeEntity<E, T>, Originator<M> {
+	
+	private LinkedList<Event> changes = new LinkedList<>();
 		
 	public <D extends DomainEvent>void apply(D event){
+		changes.add(event);
 		mutate(event);
-		DomainEventPublisher
-		  .instance()
-			.publish(event);
 	}
 
 	@Override
@@ -47,12 +49,12 @@ public abstract class AggregateRoot<E, T extends Identity<? extends Serializable
 	 * @param event event to apply to the aggregate root.
 	 */
 	@SneakyThrows
-	public <D extends DomainEvent>void mutate(D event){
+	public <D extends Event>void mutate(D event){
 		invoke("when", this, event);
 	}
 	
-	public void replayEvents(List<DomainEvent> events){
-		for(DomainEvent event : events){
+	public void replayEvents(List<Event> events){
+		for(Event event : events){
 			mutate(event);
 		}
 	}
@@ -66,5 +68,8 @@ public abstract class AggregateRoot<E, T extends Identity<? extends Serializable
 	public void restoreFrom(M momento) {
 		throw new UnsupportedOperationException("should be implemented by subclass that requre");
 	}
-
+	
+	public LinkedList<Event> changes(){
+		return changes;
+	}
 }

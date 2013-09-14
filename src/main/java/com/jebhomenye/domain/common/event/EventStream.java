@@ -1,11 +1,18 @@
 package com.jebhomenye.domain.common.event;
 
-import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-public interface EventStream {
+import lombok.Data;
+import lombok.experimental.Accessors;
+
+@Data
+@Accessors(fluent=true)
+public class EventStream {
 	
-	int version();
-	
-	Iterator<Event> eventIterator();
+	private int version;
+	private Class<? extends Event> eventType;
+	private List<Event> events = new LinkedList<>();
+
 }
  

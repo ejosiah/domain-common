@@ -17,4 +17,6 @@ public abstract class DomainEvent implements Event, ValueObject<DomainEvent>{
 	public DateTime occuredOn(){
 		return occuredOn;
 	}
+	
+	protected abstract String aggregateRoot();
 }

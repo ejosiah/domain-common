@@ -13,5 +13,5 @@ public interface EventStore {
 	
 	EventStream loadSubSet(Identity<? extends Serializable> id, int skipEvents, int maxCount);
 	
-	void appendToStream(Identity<? extends Serializable> id, int expectedVersion, Collection<DomainEvent> events);
+	void appendToStream(Identity<? extends Serializable> id, int expectedVersion, Collection<Event> events);
 }
